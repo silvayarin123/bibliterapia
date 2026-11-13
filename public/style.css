@@ -281,3 +281,24 @@ dialog[open]{display:flex;flex-direction:column}
   .purchase-bar .btn{gap:6px;padding-inline:10px;font-size:.81rem}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+.study-photos{margin-top:clamp(32px,6vw,72px);padding:clamp(16px,3.2vw,36px);border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(135deg,#faf5ff,#fff 60%,#fff8ec)}
+.study-photos-head{display:flex;align-items:end;justify-content:space-between;flex-wrap:wrap;gap:14px 24px;margin-bottom:17px}
+.study-photos-label{font-size:.73rem;font-weight:800;letter-spacing:.1em;color:var(--purple)}
+.study-photos h3{font-size:clamp(1.7rem,3.5vw,2.5rem);line-height:1.15;margin:3px 0 6px}
+.study-photos-head p:last-child{font-size:.91rem;color:var(--muted)}
+.study-photo-controls:not([hidden]){display:flex;gap:7px}
+.study-photo-controls button{display:grid;place-items:center;width:42px;height:42px;padding:0;border:1px solid #dfc9f4;border-radius:50%;background:#fff;color:var(--purple)}
+.study-photo-controls button:hover{background:var(--pale)}
+.study-photo-controls [data-photo-toggle]{background:var(--purple);color:#fff;border-color:var(--purple)}
+.study-photo-controls [data-photo-toggle]:hover{background:var(--dark)}
+.study-photo-viewport{overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:#c6a4e7 #f3e9fd;padding:3px 0 12px}
+.study-photo-track{display:grid;grid-auto-flow:column;grid-auto-columns:min(76vw,260px);gap:12px;width:max-content;margin:0;padding:0;list-style:none}
+.study-photo-track li{min-width:0;scroll-snap-align:start}
+.photo-frame{height:100%;margin:0;padding:5px;border:2px solid #ac73db;border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 4px 10px #56208817}
+.study-photo-track li:nth-child(even) .photo-frame{border-color:#eba64f}
+.photo-frame img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:10px;background:var(--pale)}
+.photo-frame figcaption{padding:9px 7px 6px;font-size:.78rem;line-height:1.35;font-weight:750}
+@media (max-width:560px){.study-photo-track{grid-auto-columns:min(62vw,232px)}}
+
+.study-photo-controls button[hidden]{display:none}

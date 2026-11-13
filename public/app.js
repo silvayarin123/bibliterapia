@@ -284,3 +284,65 @@ readingToggle.addEventListener("click", () => {
 });
 reducedMotion.addEventListener("change", setReadingMotion);
 setReadingMotion();
+
+function createStudyPhotoGallery(gallery) {
+  const viewport = gallery.querySelector("[data-photo-viewport]");
+  const track = viewport.querySelector(".study-photo-track");
+  const controls = gallery.querySelector(".study-photo-controls");
+  const toggle = controls.querySelector("[data-photo-toggle]");
+  const toggleIcon = toggle.querySelector("use");
+  let playing = true, visible = false, hovering = false, focused = false, timer;
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!playing || !visible || hovering || focused || document.hidden || reducedMotion.matches) return;
+    timer = setTimeout(() => {
+      move(1);
+      schedule();
+    }, 3600);
+  }
+
+  function move(direction) {
+    const first = track.children[0], second = track.children[1];
+    const step = second.offsetLeft - first.offsetLeft;
+    const max = viewport.scrollWidth - viewport.clientWidth;
+    if (max <= 1 || step <= 0) return;
+    const current = viewport.scrollLeft;
+    const atEnd = current >= max - 2;
+    const wraps = (direction > 0 && atEnd) || (direction < 0 && current <= 2);
+    const next = wraps ? (direction > 0 ? 0 : max) :
+      direction > 0 ? Math.min(max, (Math.floor((current + 2) / step) + 1) * step) :
+        Math.max(0, (Math.ceil((current - 2) / step) - 1) * step);
+    viewport.scrollTo({left: next, behavior: wraps || reducedMotion.matches ? "instant" : "smooth"});
+  }
+
+  function updateToggle() {
+    toggle.hidden = reducedMotion.matches;
+    toggle.setAttribute("aria-label", playing ? "Pausar rolagem" : "Retomar rolagem");
+    toggleIcon.setAttribute("href", playing ? "#i-pause" : "#i-play");
+  }
+
+  controls.querySelector("[data-photo-prev]").addEventListener("click", () => move(-1));
+  controls.querySelector("[data-photo-next]").addEventListener("click", () => move(1));
+  toggle.addEventListener("click", () => { playing = !playing; updateToggle(); schedule(); });
+  viewport.addEventListener("pointerdown", event => {
+    if (event.pointerType === "mouse") return;
+    playing = false;
+    updateToggle();
+    schedule();
+  }, {passive:true});
+  gallery.addEventListener("pointerenter", event => { if (event.pointerType === "mouse") { hovering = true; schedule(); } });
+  gallery.addEventListener("pointerleave", () => { hovering = false; schedule(); });
+  gallery.addEventListener("focusin", event => { focused = viewport.contains(event.target); schedule(); });
+  gallery.addEventListener("focusout", () => { focused = false; schedule(); });
+  document.addEventListener("visibilitychange", schedule);
+  reducedMotion.addEventListener("change", () => { updateToggle(); schedule(); });
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }, {threshold:.2}).observe(viewport);
+  } else {
+    playing = false;
+  }
+  updateToggle();
+  controls.hidden = false;
+}
+document.querySelectorAll("[data-study-photos]").forEach(createStudyPhotoGallery);
